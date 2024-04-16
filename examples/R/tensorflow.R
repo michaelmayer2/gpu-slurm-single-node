@@ -3,6 +3,18 @@
 library(tensorflow)
 library(keras)
 library(tfdatasets)
+
+# allocate 1/4 of the GPU's memory
+config$gpu_options$per_process_gpu_memory_fraction <- 0.25
+tf$compat$v1$InteractiveSession(config=config)
+
+## define a logical GPU and allocate 4 GB of GPU memory
+#gpus<-tf$config$list_physical_devices('GPU')
+#tf$config$set_logical_device_configuration(
+#  gpus[[1]],
+#  c(tf$config$LogicalDeviceConfiguration(memory_limit=4000)))
+#tf$config$list_logical_devices('GPU')
+
 set.seed(1234)
 
 url <- "https://download.microsoft.com/download/3/E/1/3E1C3F21-ECDB-4869-8368-6DEBA77B919F/kagglecatsanddogs_5340.zip"
