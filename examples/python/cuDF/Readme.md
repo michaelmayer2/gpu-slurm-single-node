@@ -1,3 +1,5 @@
 ```
-pip install -r requirements.txt --extra-index-url https://pypi.nvidia.com
+python -m venv .venv
+cp pip.conf .venv
+pip install -r requirements.txt
 ```
