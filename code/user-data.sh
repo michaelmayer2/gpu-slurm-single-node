@@ -26,7 +26,7 @@ EOF
 systemctl enable dkms
 systemctl enable nvidia-persistenced
 
-if [ -z $R_VERSION_LIST ]; then R_VERSION_LIST="3.8.19 3.9.19 3.10.14 3.11.8"; fi
+if [ -z $R_VERSION_LIST ]; then R_VERSION_LIST="4.0.5 4.1.3 4.2.3 4.3.3 4.4.0"; fi
 
 # While CUDA seems to prefer JAVA 11, Binary R packages are typically compiled with Java 8 only. 
 dnf -y install java-1.8.0-openjdk-devel
