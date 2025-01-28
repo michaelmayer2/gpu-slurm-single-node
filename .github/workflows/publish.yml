@@ -18,9 +18,7 @@ jobs:
         uses: quarto-dev/quarto-actions/setup@v2
 
       - name: Set up Jupyter
-	uses: ./
-        with:
-          command: python3 -m pip install jupyter
+        run: python3 -m pip install jupyter
 
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
