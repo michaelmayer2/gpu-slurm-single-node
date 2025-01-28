@@ -6,7 +6,7 @@ website:
   navbar:
     left:
       - href: GPU-SLURM.qmd
-        text: Tech doc 
+        text: Technical doc 
     right:
       - icon: github
         menu:
