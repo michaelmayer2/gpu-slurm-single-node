@@ -1,0 +1,23 @@
+project:
+  type: website
+
+website:
+  title: "Single node SLURM setup for GPU computing with Posit Workbench"
+  navbar:
+    left:
+      - href: GPU-SLURM.qmd
+        text: Tech doc 
+    right:
+      - icon: github
+        menu:
+          - text: Source code
+            url: https://github.com/michaelmayer2/gpu-slurm-single-node
+            target: _blank
+          - text: Report a Bug
+            url: https://github.com/michaelmayer2/gpu-slurm-single-node/issues/new?assignees=&labels=bug&projects=&template=bug_report.md&title=
+            target: _blank
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
