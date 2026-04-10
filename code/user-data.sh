@@ -1,7 +1,13 @@
 #!/bin/bash
 
+dnf install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm
+systemctl enable amazon-ssm-agent
+systemctl start amazon-ssm-agent
+
 exec > /var/log/user-data-install.log
 exec 2>&1
+
+set -x 
 
 setenforce permissive
 sed -i 's/^SELINUX=.*/SELINUX=permissive/' /etc/sysconfig/selinux 
@@ -26,7 +32,7 @@ EOF
 systemctl enable dkms
 systemctl enable nvidia-persistenced
 
-if [ -z $R_VERSION_LIST ]; then R_VERSION_LIST="3.8.19 3.9.19 3.10.14 3.11.8"; fi
+if [ -z $R_VERSION_LIST ]; then R_VERSION_LIST="4.3.3 4.4.3 4.5.3"; fi
 
 # While CUDA seems to prefer JAVA 11, Binary R packages are typically compiled with Java 8 only. 
 dnf -y install java-1.8.0-openjdk-devel
@@ -61,20 +67,17 @@ JUPYTERLAB_VERSION=3.6.5
     && /opt/python/jupyter/bin/pip install \
       jupyter \
       jupyterlab=="${JUPYTERLAB_VERSION}" \
-      rsconnect_jupyter \
       rsconnect_python \
       rsp_jupyter \
       workbench_jupyterlab \
     && ln -s /opt/python/jupyter/bin/jupyter /usr/local/bin/jupyter \
     && /opt/python/jupyter/bin/jupyter-nbextension install --sys-prefix --py rsp_jupyter \
     && /opt/python/jupyter/bin/jupyter-nbextension enable --sys-prefix --py rsp_jupyter \
-    && /opt/python/jupyter/bin/jupyter-nbextension install --sys-prefix --py rsconnect_jupyter \
-    && /opt/python/jupyter/bin/jupyter-nbextension enable --sys-prefix --py rsconnect_jupyter \
-    && /opt/python/jupyter/bin/jupyter-serverextension enable --sys-prefix --py rsconnect_jupyter
+    && /opt/python/jupyter/bin/python -m ipykernel install --name py${PYTHON_VERSION} --display-name "Python ${PYTHON_VERSION}" 
 
 
 
-if [ -z $SLURM_VERSION ]; then export SLURM_VERSION=23.11.5-1
+if [ -z $SLURM_VERSION ]; then export SLURM_VERSION=23.11.5-1; fi
 
 dnf install -y git
 
@@ -328,8 +331,8 @@ notebooks-enabled=1
 labs-enabled=1
 EOF
 
-# Install VSCode based on the PWB version.
-if ( rstudio-server | grep configure-vs-code ); then rstudio-server configure-vs-code ; rstudio-server install-vs-code-ext; else rstudio-server install-vs-code /opt/rstudio/vscode/; fi
+## Install VSCode based on the PWB version.
+#if ( rstudio-server | grep configure-vs-code ); then rstudio-server configure-vs-code ; rstudio-server install-vs-code-ext; else rstudio-server install-vs-code /opt/rstudio/vscode/; fi
   
 cat > $configdir/vscode.conf << EOF
 enabled=1
@@ -347,7 +350,7 @@ usermod -G rstudio-admins,rstudio-superuser-admins rstudio
 # below SECRET string is a 10-digit random string that will be saved
 rspasswd = `tr -dc A-Za-z0-9 < /dev/urandom | head -c 10; echo`
 echo $rspasswd > /home/rstudio/.rstudio-pw
-echo -e "$rspasswd\n$rspasswd" | passwd rstudio
+echo "rstudio:$rspasswd" | chpasswd
 
 
 # Install a couple of useful tools
@@ -368,6 +371,3 @@ sed -i 's/After=/&slurmctld.service /' /usr/lib/systemd/system/rstudio-launcher.
 # reboot 
 
 reboot 
-
-
-
